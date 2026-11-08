@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard โครงการไทยช่วยไทย</title>
+    <!-- โหลด Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ใช้ฟอนต์ Sarabun สำหรับภาษาไทยเพื่อความสวยงามและอ่านง่าย -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f3f4f6; /* bg-gray-100 */
+        }
+        /* Custom scrollbar สำหรับตาราง */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c1c1; 
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8; 
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <header class="bg-white rounded-xl shadow-sm p-6 flex flex-col md:flex-row justify-between items-center border-t-4 border-blue-600">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-900">📊 Dashboard โครงการไทยช่วยไทย</h1>
+                <p class="text-gray-500 mt-1">สรุปข้อมูลผู้เข้าร่วมโครงการและพฤติกรรมการใช้จ่าย</p>
+            </div>
+            <div class="mt-4 md:mt-0 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg font-medium text-sm">
+                อัปเดตข้อมูลล่าสุด: <span id="current-date"></span>
+            </div>
+        </header>
+
+        <!-- Filters Section -->
+        <section class="bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-lg font-semibold mb-4 text-gray-700 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                กรองข้อมูล (Filters)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- Filter: เพศ -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">เพศ</label>
+                    <select id="filter-gender" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border bg-gray-50">
+                        <option value="all">ทั้งหมด</option>
+                        <option value="ชาย">ชาย</option>
+                        <option value="หญิง">หญิง</option>
+                    </select>
+                </div>
+
+                <!-- Filter: อาชีพ -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">อาชีพ</label>
+                    <select id="filter-occupation" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border bg-gray-50">
+                        <option value="all">ทั้งหมด</option>
+                        <option value="นักศึกษา">นักศึกษา</option>
+                        <option value="พนักงาน">พนักงาน</option>
+                        <option value="ค้าขาย">ค้าขาย</option>
+                        <option value="เกษตรกร">เกษตรกร</option>
+                    </select>
+                </div>
+
+                <!-- Filter: ช่วงอายุ -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">ช่วงอายุ</label>
+                    <select id="filter-age" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border bg-gray-50">
+                        <option value="all">ทั้งหมด</option>
+                        <option value="under30">ต่ำกว่า 30 ปี</option>
+                        <option value="30-40">30 - 40 ปี</option>
+                        <option value="41-50">41 - 50 ปี</option>
+                        <option value="over50">มากกว่า 50 ปี</option>
+                    </select>
+                </div>
+
+                <!-- Filter: ช่วงเงินเดือน -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">รายได้/เดือน</label>
+                    <select id="filter-income" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border bg-gray-50">
+                        <option value="all">ทั้งหมด</option>
+                        <option value="under10k">ต่ำกว่า 10,000 บาท</option>
+                        <option value="10k-15k">10,000 - 15,000 บาท</option>
+                        <option value="over15k">มากกว่า 15,000 บาท</option>
+                    </select>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- KPI Cards Section -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- KPI: จำนวนทั้งหมด -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500 hover:shadow-md transition">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">จำนวนทั้งหมด (คน)</p>
+                        <p class="text-2xl font-bold text-gray-900" id="kpi-count">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI: ค่าใช้จ่ายสูงสุด -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-red-500 hover:shadow-md transition">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-red-100 text-red-600 mr-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">ค่าใช้จ่ายสูงสุด (บาท)</p>
+                        <p class="text-2xl font-bold text-gray-900" id="kpi-max-expense">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI: ค่าใช้จ่ายต่ำสุด -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500 hover:shadow-md transition">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium text-nowrap">ค่าใช้จ่ายต่ำสุด (บาท) <span class="text-xs text-gray-400 font-normal">*ไม่นับ 0</span></p>
+                        <p class="text-2xl font-bold text-gray-900" id="kpi-min-expense">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI: รายได้รวม -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-500 hover:shadow-md transition">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">รายได้รวมทั้งหมด (บาท)</p>
+                        <p class="text-2xl font-bold text-gray-900" id="kpi-total-income">0</p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Data Table Section -->
+        <section class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                <h2 class="text-lg font-semibold text-gray-700">รายละเอียดข้อมูล</h2>
+                <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full" id="table-count-label">แสดง 0 รายการ</span>
+            </div>
+            
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wider">
+                            <th class="p-4 font-medium border-b border-gray-200">ID</th>
+                            <th class="p-4 font-medium border-b border-gray-200">เพศ</th>
+                            <th class="p-4 font-medium border-b border-gray-200">อายุ</th>
+                            <th class="p-4 font-medium border-b border-gray-200">อาชีพ</th>
+                            <th class="p-4 font-medium border-b border-gray-200 text-right">รายได้/เดือน</th>
+                            <th class="p-4 font-medium border-b border-gray-200 text-center">สถานะ</th>
+                            <th class="p-4 font-medium border-b border-gray-200 text-right">ค่าใช้จ่าย</th>
+                            <th class="p-4 font-medium border-b border-gray-200 text-center">ความพึงพอใจ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table-body" class="text-sm text-gray-700 divide-y divide-gray-100">
+                        <!-- ข้อมูลจะถูก render ที่นี่ผ่าน JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- กรณีไม่มีข้อมูล -->
+            <div id="no-data-message" class="hidden p-8 text-center text-gray-500">
+                <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <p class="text-lg font-medium">ไม่พบข้อมูลที่ตรงกับเงื่อนไข</p>
+                <p class="text-sm mt-1">ลองปรับเปลี่ยนตัวกรองข้อมูลใหม่อีกครั้ง</p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // 1. นำเข้าข้อมูลดิบ 50 รายการ และแปลงเป็น Array of Objects
+        const rawData = [
+            { id: 1, gender: "หญิง", age: 22, occupation: "นักศึกษา", income: 8000, status: "เข้าร่วม", expense: 850, satisfaction: "มาก" },
+            { id: 2, gender: "ชาย", age: 35, occupation: "พนักงาน", income: 15000, status: "เข้าร่วม", expense: 1200, satisfaction: "มาก" },
+            { id: 3, gender: "หญิง", age: 42, occupation: "ค้าขาย", income: 12000, status: "เข้าร่วม", expense: 1500, satisfaction: "มากที่สุด" },
+            { id: 4, gender: "ชาย", age: 28, occupation: "เกษตรกร", income: 10000, status: "ไม่เข้าร่วม", expense: 0, satisfaction: "ปานกลาง" },
+            { id: 5, gender: "หญิง", age: 31, occupation: "พนักงาน", income: 18000, status: "เข้าร่วม", expense: 950, satisfaction: "มาก" },
+            { id: 6, gender: "หญิง", age: 50, occupation: "ค้าขาย", income: 14000, status: "เข้าร่วม", expense: 1800, satisfaction: "มากที่สุด" },
+            { id: 7, gender: "ชาย", age: 45, occupation: "เกษตรกร", income: 9000, status: "เข้าร่วม", expense: 700, satisfaction: "มาก" },
+            { id: 8, gender: "หญิง", age: 25, occupation: "นักศึกษา", income: 7000, status: "ไม่เข้าร่วม", expense: 0, satisfaction: "ปานกลาง" },
+            { id: 9, gender: "ชาย", age: 39, occupation: "พนักงาน", income: 20000, status: "เข้าร่วม", expense: 1350, satisfaction: "มาก" },
+            { id: 10, gender: "หญิง", age: 36, occupation: "ค้าขาย", income: 16000, status: "เข้าร่วม", expense: 1600, satisfaction: "มากที่สุด" },
+            { id: 11, gender: "ชาย", age: 52, occupation: "เกษตรกร", income: 11000, status: "เข้าร่วม", expense: 900, satisfaction: "มาก" },
+            { id: 12, gender: "หญิง", age: 29, occupation: "พนักงาน", income: 17000, status: "เข้าร่วม", expense: 1100, satisfaction: "มาก" },
+            { id: 13, gender: "หญิง", age: 21, occupation: "นักศึกษา", income: 6000, status: "ไม่เข้าร่วม", expense: 0, satisfaction: "น้อย" },
+            { id: 14, gender: "ชาย", age: 33, occupation: "ค้าขาย", income: 13000, status: "เข้าร่วม", expense: 1400, satisfaction: "มากที่สุด" },
+            { id: 15, gender: "หญิง", age: 47, occupation: "เกษตรกร", income: 10000, status: "เข้าร่วม", expense: 800, satisfaction: "มาก" },
+            { id: 16, gender: "ชาย", age: 26, occupation: "พนักงาน", income: 16000, status: "เข้าร่วม", expense: 1250, satisfaction: "มาก" },
+            { id: 17, gender: "หญิง", age: 40, occupation: "ค้าขาย", income: 19000, status: "เข้าร่วม", expense: 1700, satisfaction: "มากที่สุด" },
+            { id: 18, gender: "ชาย", age: 30, occupation: "นักศึกษา", income: 9000, status: "ไม่เข้าร่วม", expense: 0, satisfaction: "ปานกลาง" },
+            { id: 19, gender: "หญิง", age: 55, occupation: "เกษตรกร", income: 8000, status: "เข้าร่วม", expense: 650, satisfaction: "มาก" },
+            { id: 20, gender: "ชาย", age: 38, occupation: "พนักงาน", income: 22000, status: "เข้าร่วม", expense: 1500, satisfaction: "มากที่สุด" },
+            { id: 21, gender: "หญิง", age: 34, occupation: "ค้าขาย", income: 15000, status: "เข้าร่วม", expense: 1300, satisfaction: "มาก" },
+            { id: 22, gender: "ชาย", age: 44, occupation: "เกษตรกร", income: 12000, status: "เข้าร่วม", expense: 950, satisfaction: "มาก" },
+            { id: 23, gender: "หญิง", age: 24, occupation: "นักศึกษา", income: 7500, status: "ไม่เข้าร่วม", expense: 0, satisfaction: "ปานกลาง" },
+            { id: 24, gender: "ชาย", age: 41, occupation: "พนักงาน", income: 18000, status: "เข้าร่วม", expense: 1450, satisfaction: "มากที่สุด" },
+            { id: 25, gender: "หญิง", age: 48, occupation: "ค้าขาย", income: 20000, status: "เข้าร่วม", expense: 1900, satisfaction: "มากที่สุด" },
+            { id: 26, gender: "ชาย", age: 32, occupation: "เกษตรกร", income: 9500, status: "เข้าร่วม", expense: 750, satisfaction: "มาก" },
+            { id: 27, gender: "หญิง", age: 27, occupation: "พนักงาน", income: 14000, status: "เข้าร่วม", expense: 1100, satisfaction: "มาก" },
+            { id: 28, gender: "ชาย", age: 56, occupation: "ค้าขาย", income: 17000, status: "เข้าร่วม", expense: 1600, satisfaction: "มากที่สุด" },
+            { id: 29, gender: "หญิง", age: 37, occupation: "เกษตรกร", income: 11000, status: "ไม่เข้าร่วม", expense: 0, satisfaction: "ปานกลาง" },
+            { id: 30, gender: "ชาย", age: 23, occupation: "นักศึกษา", income: 8000, status: "เข้าร่วม", expense: 600, satisfaction: "มาก" },
+            { id: 31, gender: "หญิง", age: 43, occupation: "พนักงาน", income: 21000, status: "เข้าร่วม", expense: 1500, satisfaction: "มากที่สุด" },
+            { id: 32, gender: "ชาย", age: 49, occupation: "ค้าขาย", income: 16000, status: "เข้าร่วม", expense: 1750, satisfaction: "มาก" },
+            { id: 33, gender: "หญิง", age: 30, occupation: "เกษตรกร", income: 10000, status: "เข้าร่วม", expense: 850, satisfaction: "มาก" },
+            { id: 34, gender: "ชาย", age: 36, occupation: "พนักงาน", income: 19000, status: "เข้าร่วม", expense: 1300, satisfaction: "มาก" },
+            { id: 35, gender: "หญิง", age: 53, occupation: "ค้าขาย", income: 18000, status: "เข้าร่วม", expense: 1800, satisfaction: "มากที่สุด" },
+            { id: 36, gender: "ชาย", age: 29, occupation: "นักศึกษา", income: 9000, status: "ไม่เข้าร่วม", expense: 0, satisfaction: "น้อย" },
+            { id: 37, gender: "หญิง", age: 46, occupation: "เกษตรกร", income: 12000, status: "เข้าร่วม", expense: 900, satisfaction: "มาก" },
+            { id: 38, gender: "ชาย", age: 40, occupation: "พนักงาน", income: 23000, status: "เข้าร่วม", expense: 1650, satisfaction: "มากที่สุด" },
+            { id: 39, gender: "หญิง", age: 26, occupation: "ค้าขาย", income: 13000, status: "เข้าร่วม", expense: 1200, satisfaction: "มาก" },
+            { id: 40, gender: "ชาย", age: 51, occupation: "เกษตรกร", income: 8500, status: "เข้าร่วม", expense: 700, satisfaction: "ปานกลาง" },
+            { id: 41, gender: "หญิง", age: 33, occupation: "พนักงาน", income: 17000, status: "เข้าร่วม", expense: 1350, satisfaction: "มาก" },
+            { id: 42, gender: "ชาย", age: 27, occupation: "ค้าขาย", income: 14000, status: "เข้าร่วม", expense: 1500, satisfaction: "มากที่สุด" },
+            { id: 43, gender: "หญิง", age: 45, occupation: "เกษตรกร", income: 9000, status: "ไม่เข้าร่วม", expense: 0, satisfaction: "ปานกลาง" },
+            { id: 44, gender: "ชาย", age: 31, occupation: "พนักงาน", income: 20000, status: "เข้าร่วม", expense: 1400, satisfaction: "มาก" },
+            { id: 45, gender: "หญิง", age: 39, occupation: "ค้าขาย", income: 16000, status: "เข้าร่วม", expense: 1700, satisfaction: "มากที่สุด" },
+            { id: 46, gender: "ชาย", age: 54, occupation: "เกษตรกร", income: 11000, status: "เข้าร่วม", expense: 850, satisfaction: "มาก" },
+            { id: 47, gender: "หญิง", age: 28, occupation: "พนักงาน", income: 15000, status: "เข้าร่วม", expense: 1250, satisfaction: "มาก" },
+            { id: 48, gender: "ชาย", age: 42, occupation: "ค้าขาย", income: 19000, status: "เข้าร่วม", expense: 1800, satisfaction: "มากที่สุด" },
+            { id: 49, gender: "หญิง", age: 35, occupation: "เกษตรกร", income: 10000, status: "ไม่เข้าร่วม", expense: 0, satisfaction: "ปานกลาง" },
+            { id: 50, gender: "ชาย", age: 24, occupation: "นักศึกษา", income: 8000, status: "เข้าร่วม", expense: 750, satisfaction: "มาก" }
+        ];
+
+        // Format Date for Header
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('th-TH', options);
+
+        // Utility ฟังก์ชันฟอร์แมตตัวเลขให้มีคอมม่า
+        const formatNumber = (num) => {
+            return new Intl.NumberFormat('th-TH').format(num);
+        };
+
+        // DOM Elements
+        const tableBody = document.getElementById('data-table-body');
+        const noDataMsg = document.getElementById('no-data-message');
+        const countLabel = document.getElementById('table-count-label');
+        
+        const filterGender = document.getElementById('filter-gender');
+        const filterOccupation = document.getElementById('filter-occupation');
+        const filterAge = document.getElementById('filter-age');
+        const filterIncome = document.getElementById('filter-income');
+
+        // ฟังก์ชันอัปเดตหน้าจอหลัก (กรองข้อมูล, คำนวณ KPI, วาดตาราง)
+        function renderDashboard() {
+            // 1. ดึงค่าจาก Filters
+            const genderVal = filterGender.value;
+            const occVal = filterOccupation.value;
+            const ageVal = filterAge.value;
+            const incomeVal = filterIncome.value;
+
+            // 2. กรองข้อมูล (Filtering Logic)
+            const filteredData = rawData.filter(item => {
+                // Filter เพศ
+                if (genderVal !== 'all' && item.gender !== genderVal) return false;
+                
+                // Filter อาชีพ
+                if (occVal !== 'all' && item.occupation !== occVal) return false;
+                
+                // Filter ช่วงอายุ
+                if (ageVal !== 'all') {
+                    if (ageVal === 'under30' && item.age >= 30) return false;
+                    if (ageVal === '30-40' && (item.age < 30 || item.age > 40)) return false;
+                    if (ageVal === '41-50' && (item.age < 41 || item.age > 50)) return false;
+                    if (ageVal === 'over50' && item.age <= 50) return false;
+                }
+
+                // Filter ช่วงเงินเดือน
+                if (incomeVal !== 'all') {
+                    if (incomeVal === 'under10k' && item.income >= 10000) return false;
+                    if (incomeVal === '10k-15k' && (item.income < 10000 || item.income > 15000)) return false;
+                    if (incomeVal === 'over15k' && item.income <= 15000) return false;
+                }
+
+                return true;
+            });
+
+            // 3. คำนวณ KPI Cards
+            const count = filteredData.length;
+            const totalIncome = filteredData.reduce((sum, item) => sum + item.income, 0);
+            
+            // หาค่าใช้จ่ายสูงสุด (ถ้าไม่มีข้อมูลให้เป็น 0)
+            const maxExpense = count > 0 ? Math.max(...filteredData.map(d => d.expense)) : 0;
+            
+            // หาค่าใช้จ่ายต่ำสุด (ไม่นับ 0)
+            const expensesGreaterThanZero = filteredData.map(d => d.expense).filter(e => e > 0);
+            const minExpense = expensesGreaterThanZero.length > 0 
+                ? Math.min(...expensesGreaterThanZero) 
+                : 0;
+
+            // อัปเดต DOM ส่วน KPI
+            document.getElementById('kpi-count').textContent = formatNumber(count);
+            document.getElementById('kpi-total-income').textContent = formatNumber(totalIncome);
+            document.getElementById('kpi-max-expense').textContent = formatNumber(maxExpense);
+            document.getElementById('kpi-min-expense').textContent = formatNumber(minExpense);
+            countLabel.textContent = `แสดง ${count} รายการ`;
+
+            // 4. สร้างแถวข้อมูลในตาราง
+            tableBody.innerHTML = ''; // เคลียร์ตารางเดิม
+            
+            if (count === 0) {
+                noDataMsg.classList.remove('hidden');
+                tableBody.parentElement.classList.add('hidden'); // ซ่อนตารางถ้าไม่มีข้อมูล
+            } else {
+                noDataMsg.classList.add('hidden');
+                tableBody.parentElement.classList.remove('hidden');
+
+                filteredData.forEach(item => {
+                    // กำหนดสีของ Badge สถานะ
+                    const statusBadgeClass = item.status === 'เข้าร่วม' 
+                        ? 'bg-green-100 text-green-700 border-green-200' 
+                        : 'bg-red-100 text-red-700 border-red-200';
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-blue-50 transition-colors duration-150 group";
+                    tr.innerHTML = `
+                        <td class="p-4 border-b border-gray-100">${item.id}</td>
+                        <td class="p-4 border-b border-gray-100 font-medium ${item.gender === 'หญิง' ? 'text-pink-600' : 'text-blue-600'}">${item.gender}</td>
+                        <td class="p-4 border-b border-gray-100">${item.age}</td>
+                        <td class="p-4 border-b border-gray-100">${item.occupation}</td>
+                        <td class="p-4 border-b border-gray-100 text-right">${formatNumber(item.income)}</td>
+                        <td class="p-4 border-b border-gray-100 text-center">
+                            <span class="px-3 py-1 rounded-full text-xs font-medium border ${statusBadgeClass}">
+                                ${item.status}
+                            </span>
+                        </td>
+                        <td class="p-4 border-b border-gray-100 text-right font-semibold text-gray-800">${formatNumber(item.expense)}</td>
+                        <td class="p-4 border-b border-gray-100 text-center text-gray-500">${item.satisfaction}</td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            }
+        }
+
+        // 5. ผูก Event Listener เมื่อมีการเปลี่ยนค่าใน Dropdown
+        filterGender.addEventListener('change', renderDashboard);
+        filterOccupation.addEventListener('change', renderDashboard);
+        filterAge.addEventListener('change', renderDashboard);
+        filterIncome.addEventListener('change', renderDashboard);
+
+        // 6. รันครั้งแรกเมื่อโหลดหน้าเว็บเสร็จ
+        window.onload = function() {
+            renderDashboard();
+        };
+
+    </script>
+</body>
+</html>
